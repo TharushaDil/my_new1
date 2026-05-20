@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tharusha Dilshan | Chemical Technology</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#010a0f;--bg2:#040f17;--bg3:#071520;
+  --cyan:#00e5ff;--teal:#00ffc3;--amber:#ff9d00;--red:#ff5555;
+  --white:#e8f4f8;--muted:#5a8a9a;
+  --border:rgba(0,229,255,0.15);
+  --glow:0 0 20px rgba(0,229,255,0.3);
+  --glow-strong:0 0 40px rgba(0,229,255,0.5),0 0 80px rgba(0,229,255,0.2);
+  --F:'Times New Roman',Times,serif;
+  --FM:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--F);overflow-x:hidden;cursor:crosshair;}
+
+/* ───── WELCOME WALL ───── */
+#wwall{position:fixed;inset:0;z-index:9999;overflow:hidden;background:#010a0f;display:flex;align-items:center;justify-content:center;}
+#wcanvas{position:absolute;inset:0;width:100%;height:100%;}
+.wc{position:relative;z-index:2;text-align:center;pointer-events:none;}
+.wname{
+  font-family:'Times New Roman',Times,serif;
+  font-size:clamp(4rem,18vw,18rem);
+  font-weight:700;line-height:0.8;letter-spacing:-6px;
+  background:linear-gradient(135deg,#fff 0%,#00e5ff 45%,#00ffc3 80%,#ff9d00 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 60px rgba(0,229,255,0.7));
+  animation:wSlide 1.2s cubic-bezier(0.16,1,0.3,1) forwards;
+  opacity:0;transform:translateY(60px);
+}
+.wtitle{
+  font-family:'Share Tech Mono',monospace;font-size:clamp(0.65rem,2.2vw,1.1rem);
+  color:#00ffc3;letter-spacing:8px;text-transform:uppercase;
+  opacity:0;animation:wFade 1s ease 1.4s forwards;
+  margin-top:1.2rem;
+}
+.wformula{
+  font-family:'Share Tech Mono',monospace;font-size:clamp(0.55rem,1.5vw,0.85rem);
+  color:rgba(0,229,255,0.6);letter-spacing:4px;
+  opacity:0;animation:wFade 1s ease 1.9s forwards;
+  margin-top:0.5rem;
+}
+.wdivider{width:0;height:1px;background:linear-gradient(90deg,transparent,#00e5ff,transparent);margin:1.5rem auto;transition:width 1.8s cubic-bezier(0.16,1,0.3,1) 0.6s;}
+.wdivider.go{width:min(600px,80vw);}
+.wenter{
+  font-family:'Share Tech Mono',monospace;font-size:0.7rem;
+  letter-spacing:4px;text-transform:uppercase;color:rgba(90,138,154,0.8);
+  border:1px solid rgba(0,229,255,0.3);padding:10px 28px;border-radius:1px;
+  cursor:pointer;pointer-events:all;display:inline-block;margin-top:2.5rem;
+  opacity:0;animation:wFade 1s ease 2.6s forwards;
+  transition:color 0.3s,border-color 0.3s,box-shadow 0.3s;
+}
+.wenter:hover{color:#00e5ff;border-color:#00e5ff;box-shadow:var(--glow);}
+.wpbar{position:absolute;bottom:0;left:0;height:2px;background:linear-gradient(90deg,#00e5ff,#00ffc3,#ff9d00);animation:wpb 4.2s linear forwards;}
+@keyframes wpb{from{width:0}to{width:100%}}
+@keyframes wSlide{to{opacity:1;transform:translateY(0)}}
+@keyframes wFade{from{opacity:0;letter-spacing:14px}to{opacity:1;letter-spacing:8px}}
+.wall-out{animation:wallExit 0.8s ease forwards!important;}
+@keyframes wallExit{to{opacity:0;transform:scale(1.04);pointer-events:none;}}
+
+/* ───── CURSOR ───── */
+.cursor-dot{position:fixed;width:7px;height:7px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--cyan);}
+.cursor-ring{position:fixed;width:34px;height:34px;border:1px solid rgba(0,229,255,0.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease;}
+
+/* ───── BG ───── */
+#bg-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:0.55;}
+
+/* ───── NAV ───── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem;background:rgba(1,10,15,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:var(--FM);font-size:1.1rem;color:var(--cyan);letter-spacing:3px;text-shadow:var(--glow);}
+.nav-logo span{color:var(--teal);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-family:var(--F);font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;transition:color 0.3s,text-shadow 0.3s;}
+.nav-links a:hover{color:var(--cyan);text-shadow:var(--glow);}
+.nav-status{font-family:var(--FM);font-size:0.75rem;color:var(--teal);display:flex;align-items:center;gap:8px;}
+.nav-status::before{content:'';width:8px;height:8px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--teal);}50%{opacity:0.4;box-shadow:none;}}
+
+section{position:relative;z-index:1;}
+
+/* ───── HERO ───── */
+#hero{min-height:100vh;display:flex;align-items:center;padding:6rem 3rem 3rem;overflow:hidden;}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;max-width:1400px;margin:0 auto;width:100%;}
+.hero-tag{font-family:var(--FM);font-size:0.75rem;color:var(--teal);letter-spacing:4px;margin-bottom:1rem;}
+.hero-name{font-family:var(--F);font-weight:700;font-size:clamp(3rem,6vw,6rem);line-height:0.95;background:linear-gradient(135deg,var(--white) 0%,var(--cyan) 60%,var(--teal) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-family:var(--F);font-weight:300;font-size:clamp(1.1rem,2.2vw,1.7rem);color:var(--amber);letter-spacing:3px;margin-top:0.5rem;text-transform:uppercase;}
+.hero-desc{color:var(--muted);line-height:1.9;margin-top:1.5rem;font-size:1rem;max-width:500px;}
+.hero-cta{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap;}
+.btn{font-family:var(--F);font-weight:600;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:0.9rem 2rem;border-radius:2px;transition:all 0.3s;cursor:pointer;border:none;display:inline-block;}
+.btn-primary{background:var(--cyan);color:var(--bg);box-shadow:0 0 30px rgba(0,229,255,0.4);}
+.btn-primary:hover{background:var(--teal);box-shadow:0 0 50px rgba(0,255,195,0.5);transform:translateY(-2px);}
+.btn-outline{background:transparent;color:var(--cyan);border:1px solid var(--cyan);}
+.btn-outline:hover{background:rgba(0,229,255,0.1);box-shadow:var(--glow);transform:translateY(-2px);}
+.atom-wrap{position:relative;}
+.atom-label{font-family:var(--FM);font-size:0.7rem;color:var(--muted);margin-bottom:8px;}
+#atom-canvas{width:100%;height:480px;border:1px solid var(--border);border-radius:4px;background:radial-gradient(ellipse at center,rgba(0,40,60,0.8) 0%,rgba(1,10,15,0.9) 70%);box-shadow:var(--glow-strong),inset 0 0 60px rgba(0,229,255,0.05);cursor:grab;display:block;}
+#atom-canvas:active{cursor:grabbing;}
+.atom-controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.mol-btn{font-family:var(--FM);font-size:0.7rem;padding:6px 14px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;border-radius:2px;letter-spacing:1px;transition:all 0.2s;}
+.mol-btn:hover,.mol-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,0.05);}
+
+/* ───── SECTION COMMON ───── */
+.section-header{max-width:1400px;margin:0 auto;padding:6rem 3rem 3rem;}
+.section-tag{font-family:var(--FM);font-size:0.7rem;color:var(--teal);letter-spacing:4px;margin-bottom:0.5rem;}
+.section-title{font-family:var(--F);font-weight:700;font-size:clamp(2rem,4vw,3.5rem);color:var(--white);line-height:1;}
+.section-title span{color:var(--cyan);}
+.section-line{width:80px;height:2px;background:linear-gradient(90deg,var(--cyan),transparent);margin-top:1.5rem;}
+
+/* ───── STATS ───── */
+.stats-row{max-width:1400px;margin:0 auto;padding:0 3rem 4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.stat-card{padding:1.5rem;border:1px solid var(--border);background:rgba(4,15,23,0.4);text-align:center;border-radius:2px;transition:all 0.3s;}
+.stat-card:hover{border-color:rgba(0,229,255,0.4);box-shadow:var(--glow);}
+.stat-num{font-family:var(--F);font-weight:700;font-size:2.5rem;color:var(--cyan);text-shadow:var(--glow);}
+.stat-lbl{font-family:var(--FM);font-size:0.62rem;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+
+/* ───── ABOUT ───── */
+.about-grid{max-width:1400px;margin:0 auto;padding:0 3rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+.about-text{color:rgba(232,244,248,0.78);line-height:2;font-size:1rem;}
+.about-text p{margin-bottom:1.2rem;}
+.about-text strong{color:var(--cyan);font-weight:600;}
+.info-cards{display:flex;flex-direction:column;gap:1rem;}
+.info-card{padding:1.2rem 1.5rem;border:1px solid var(--border);border-left:3px solid var(--cyan);background:rgba(0,229,255,0.02);border-radius:2px;transition:all 0.3s;}
+.info-card:hover{background:rgba(0,229,255,0.06);border-left-color:var(--teal);transform:translateX(4px);}
+.info-card-inner{display:flex;align-items:center;gap:1rem;}
+.info-label{font-family:var(--FM);font-size:0.65rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
+.info-value{font-family:var(--F);font-size:1rem;font-weight:600;color:var(--white);}
+.element-badge{flex-shrink:0;width:72px;height:72px;border:2px solid var(--cyan);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,229,255,0.05);box-shadow:var(--glow);}
+.elem-num{font-family:var(--FM);font-size:0.6rem;color:var(--muted);}
+.elem-sym{font-family:var(--F);font-weight:700;font-size:1.8rem;color:var(--cyan);line-height:1;}
+.elem-name{font-family:var(--FM);font-size:0.55rem;color:var(--teal);}
+
+/* ───── SKILLS ───── */
+.skills-grid{max-width:1400px;margin:0 auto;padding:0 3rem 4rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+.skill-card{padding:2rem;border:1px solid var(--border);background:rgba(4,15,23,0.6);border-radius:2px;position:relative;overflow:hidden;transition:all 0.4s;}
+.skill-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--teal));transform:scaleX(0);transform-origin:left;transition:transform 0.4s;}
+.skill-card:hover{border-color:rgba(0,229,255,0.4);transform:translateY(-4px);box-shadow:var(--glow);}
+.skill-card:hover::before{transform:scaleX(1);}
+.skill-icon{font-size:2rem;margin-bottom:1rem;display:block;}
+.skill-name{font-family:var(--F);font-weight:600;font-size:1.2rem;color:var(--white);margin-bottom:0.5rem;}
+.skill-desc{font-size:0.85rem;color:var(--muted);line-height:1.7;margin-bottom:1.2rem;}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.skill-tag{font-family:var(--FM);font-size:0.62rem;padding:4px 10px;border:1px solid rgba(0,229,255,0.2);color:var(--cyan);border-radius:20px;background:rgba(0,229,255,0.03);}
+
+/* ───── TIMELINE ───── */
+.qual-container{max-width:1400px;margin:0 auto;padding:0 3rem 4rem;}
+.timeline{position:relative;}
+.timeline::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--cyan),transparent);}
+.timeline-item{display:flex;gap:2rem;margin-bottom:2.5rem;opacity:0;transform:translateX(-20px);transition:all 0.6s ease;}
+.timeline-item.visible{opacity:1;transform:translateX(0);}
+.timeline-dot{flex-shrink:0;width:48px;height:48px;border:2px solid var(--cyan);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--FM);font-size:0.7rem;color:var(--cyan);background:var(--bg);box-shadow:var(--glow);z-index:1;}
+.timeline-content{flex:1;padding:1.5rem 2rem;border:1px solid var(--border);background:rgba(4,15,23,0.5);border-radius:2px;position:relative;}
+.timeline-content::before{content:'';position:absolute;left:-8px;top:20px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid rgba(0,229,255,0.15);}
+.tl-date{font-family:var(--FM);font-size:0.7rem;color:var(--amber);letter-spacing:2px;margin-bottom:4px;}
+.tl-title{font-family:var(--F);font-weight:600;font-size:1.2rem;color:var(--white);}
+.tl-place{font-size:0.85rem;color:var(--cyan);margin-bottom:0.5rem;}
+.tl-desc{font-size:0.85rem;color:var(--muted);line-height:1.7;}
+
+/* ───── RESEARCH SECTION ───── */
+.proj-grid{max-width:1400px;margin:0 auto;padding:0 3rem 4rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;}
+.proj-card{border:1px solid var(--border);background:rgba(4,15,23,0.6);border-radius:2px;overflow:hidden;transition:all 0.4s;}
+.proj-card:hover{border-color:rgba(0,229,255,0.5);box-shadow:var(--glow);}
+.proj-img{width:100%;height:160px;background:var(--bg3);overflow:hidden;position:relative;}
+.proj-img canvas{width:100%;height:100%;display:block;}
+.proj-body{padding:1.5rem;}
+.proj-num{font-family:var(--FM);font-size:0.62rem;color:var(--teal);letter-spacing:3px;margin-bottom:8px;}
+.proj-title{font-family:var(--F);font-weight:600;font-size:1.1rem;color:var(--white);margin-bottom:8px;}
+.proj-desc{font-size:0.83rem;color:var(--muted);line-height:1.7;margin-bottom:1rem;}
+.proj-tech{display:flex;flex-wrap:wrap;gap:6px;}
+.proj-tech span{font-family:var(--FM);font-size:0.6rem;padding:3px 10px;background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.15);color:var(--cyan);border-radius:20px;}
+/* Empty/placeholder research card */
+.proj-card.placeholder{border-style:dashed;border-color:rgba(0,229,255,0.2);opacity:0.6;}
+.proj-card.placeholder:hover{opacity:1;border-color:rgba(0,229,255,0.4);}
+.placeholder-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:240px;gap:1rem;}
+.ph-icon{font-size:2.5rem;opacity:0.4;}
+.ph-text{font-family:var(--FM);font-size:0.65rem;color:var(--muted);letter-spacing:3px;text-align:center;}
+
+/* ───── CONTACT (redesigned) ───── */
+#contact{background:var(--bg);}
+.contact-outer{max-width:1400px;margin:0 auto;padding:0 3rem 6rem;}
+.contact-hero-row{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-bottom:3rem;}
+.contact-quote-block{padding:2.5rem;border:1px solid rgba(0,229,255,0.3);background:rgba(4,15,23,0.8);border-radius:4px;position:relative;overflow:hidden;}
+.contact-quote-block::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent 0deg,rgba(0,229,255,0.03) 60deg,transparent 120deg);animation:rotatebg 10s linear infinite;pointer-events:none;}
+@keyframes rotatebg{to{transform:rotate(360deg);}}
+.cq-tag{font-family:var(--FM);font-size:0.7rem;color:var(--amber);letter-spacing:3px;margin-bottom:1rem;}
+.cq-title{font-family:var(--F);font-weight:700;font-size:2rem;color:var(--white);margin-bottom:1rem;}
+.cq-quote{font-style:italic;color:rgba(232,244,248,0.7);line-height:2;font-size:1rem;margin-bottom:2rem;padding-left:1rem;border-left:2px solid var(--amber);}
+/* Orbiting contact cards */
+.contact-orbit{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.clink-card{display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;border:1px solid var(--border);border-radius:3px;background:rgba(4,15,23,0.5);text-decoration:none;color:inherit;transition:all 0.3s;position:relative;overflow:hidden;}
+.clink-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,229,255,0.04),transparent);opacity:0;transition:opacity 0.3s;}
+.clink-card:hover::before{opacity:1;}
+.clink-card:hover{border-color:rgba(0,229,255,0.5);transform:translateY(-2px);box-shadow:var(--glow);}
+.clink-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.clink-icon.email{background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);}
+.clink-icon.li{background:rgba(0,119,181,0.15);border:1px solid rgba(0,119,181,0.3);}
+.clink-icon.gh{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);}
+.clink-icon.fb{background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.25);}
+.clink-icon.ig{background:rgba(225,48,108,0.1);border:1px solid rgba(225,48,108,0.25);}
+.clink-icon.wa{background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);}
+.clink-info{min-width:0;}
+.clink-label{font-family:var(--FM);font-size:0.6rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:2px;}
+.clink-val{font-family:var(--F);font-size:0.85rem;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* Form */
+.contact-form-wrap{background:rgba(4,15,23,0.7);border:1px solid var(--border);border-radius:4px;padding:2.5rem;position:relative;z-index:1;}
+.form-section-tag{font-family:var(--FM);font-size:0.7rem;color:var(--teal);letter-spacing:4px;margin-bottom:1.5rem;}
+.contact-form{display:flex;flex-direction:column;gap:1rem;}
+.contact-form input,.contact-form textarea{padding:0.85rem 1rem;background:rgba(1,10,15,0.8);border:1px solid var(--border);color:var(--white);border-radius:2px;font-family:var(--F);font-size:0.9rem;transition:border-color 0.3s,box-shadow 0.3s;resize:none;outline:none;}
+.contact-form input:focus,.contact-form textarea:focus{border-color:var(--cyan);box-shadow:0 0 15px rgba(0,229,255,0.15);}
+.contact-form input::placeholder,.contact-form textarea::placeholder{color:var(--muted);}
+
+/* ───── FOOTER ───── */
+footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--FM);font-size:0.7rem;color:var(--muted);position:relative;z-index:1;}
+
+/* ───── UTILS ───── */
+.fade-in{opacity:0;transform:translateY(30px);transition:all 0.8s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}.nav-links{display:none;}
+  .hero-grid,.about-grid,.contact-hero-row{grid-template-columns:1fr;gap:2rem;}
+  .contact-orbit{grid-template-columns:1fr;}
+  .section-header,.about-grid,.qual-container,.proj-grid,.contact-outer,.stats-row{padding-left:1.5rem;padding-right:1.5rem;}
+  .stats-row{grid-template-columns:repeat(3,1fr);}
+  #hero{padding:5rem 1.5rem 2rem;}
+  .wname{letter-spacing:-2px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ WELCOME WALL ═══ -->
+<div id="wwall">
+  <canvas id="wcanvas"></canvas>
+  <div class="wc">
+    <div class="wname" id="wname">TD</div>
+    <div class="wdivider" id="wdivider"></div>
+    <div class="wtitle">Tharusha Dilshan · Chemical Technology</div>
+    <div class="wformula">C₈H₁₁NO₂ · Dopamine · Sabaragamuwa University of Sri Lanka</div>
+    <div class="wenter" onclick="dismissWall()">Enter Portfolio &rsaquo;</div>
+  </div>
+  <div class="wpbar"></div>
+</div>
+
+<div class="cursor-dot" id="cd"></div>
+<div class="cursor-ring" id="cr"></div>
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">TD<span>_</span>CHEM</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#qualifications">Education</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-status">SYSTEM ONLINE</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid">
+    <div class="fade-in">
+      <p class="hero-tag">// CHEMICAL TECHNOLOGIST · RESEARCHER · INNOVATOR</p>
+      <h1 class="hero-name">THARUSHA<br>DILSHAN</h1>
+      <p class="hero-sub">Chemical Technology</p>
+      <p class="hero-desc">Exploring the molecular frontier — transforming chemical science into real-world solutions. Undergraduate at Sabaragamuwa University of Sri Lanka, passionate about analytical chemistry, advanced materials, and sustainable processes.</p>
+      <div class="hero-cta">
+        <a href="#research" class="btn btn-primary">View Research</a>
+        <a href="#contact" class="btn btn-outline">Get in Touch</a>
+      </div>
+    </div>
+    <div class="fade-in" style="transition-delay:0.3s">
+      <div class="atom-wrap">
+        <div class="atom-label">3D MOLECULAR VISUALIZER — DRAG TO ROTATE</div>
+        <canvas id="atom-canvas"></canvas>
+        <div class="atom-controls">
+          <button class="mol-btn active" data-mol="dopamine">Dopamine</button>
+          <button class="mol-btn" data-mol="water">H₂O</button>
+          <button class="mol-btn" data-mol="co2">CO₂</button>
+          <button class="mol-btn" data-mol="benzene">C₆H₆</button>
+          <button class="mol-btn" data-mol="caffeine">Caffeine</button>
+          <button class="mol-btn" data-mol="glucose">Glucose</button>
+          <button class="mol-btn" data-mol="nh3">NH₃</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-row fade-in">
+  <div class="stat-card"><div class="stat-num" data-target="3">0</div><div class="stat-lbl">YEARS STUDY</div></div>
+  <div class="stat-card"><div class="stat-num" data-target="12">0</div><div class="stat-lbl">COURSES DONE</div></div>
+  <div class="stat-card"><div class="stat-num" data-target="8">0</div><div class="stat-lbl">LAB PROJECTS</div></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header fade-in">
+    <p class="section-tag">// 01 · ABOUT</p>
+    <h2 class="section-title">Who I <span>Am</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text fade-in">
+      <p>I am <strong>Tharusha Dilshan</strong>, a Chemical Technology undergraduate at the <strong>Faculty of Applied Sciences, Sabaragamuwa University of Sri Lanka</strong>, with a deep fascination for molecular science and its transformative potential.</p>
+      <p>My interests span <strong>analytical chemistry</strong>, <strong>materials science</strong>, and <strong>process optimization</strong>. I believe chemistry is the language of the universe — every reaction tells a story of atoms seeking equilibrium.</p>
+      <p>Beyond the lab, I explore <strong>computational chemistry</strong>, molecular simulations, and data-driven approaches. I am driven by the ambition to contribute to sustainable chemical processes and green technology.</p>
+    </div>
+    <div class="info-cards fade-in" style="transition-delay:0.2s">
+      <div class="info-card">
+        <div class="info-card-inner">
+          <div class="element-badge"><span class="elem-num">6</span><span class="elem-sym">C</span><span class="elem-name">Carbon</span></div>
+          <div><div class="info-label">Degree Programme</div><div class="info-value">BSc (Hons) Chemical Technology</div></div>
+        </div>
+      </div>
+      <div class="info-card"><div class="info-label">University</div><div class="info-value">Sabaragamuwa University of Sri Lanka</div></div>
+      <div class="info-card"><div class="info-label">Faculty</div><div class="info-value">Faculty of Applied Sciences</div></div>
+      <div class="info-card"><div class="info-label">Status</div><div class="info-value" style="color:var(--teal)">● Undergraduate · Active Student</div></div>
+      <div class="info-card"><div class="info-label">Location</div><div class="info-value">Sri Lanka</div></div>
+      <div class="info-card"><div class="info-label">Primary Focus</div><div class="info-value">Analytical &amp; Industrial Chemistry</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header fade-in">
+    <p class="section-tag">// 02 · COMPETENCIES</p>
+    <h2 class="section-title">Skills &amp; <span>Expertise</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card fade-in"><span class="skill-icon">⚗️</span><div class="skill-name">Analytical Chemistry</div><div class="skill-desc">Proficient in qualitative and quantitative analysis including titration, spectrophotometry, and chromatographic methods.</div><div class="skill-tags"><span class="skill-tag">HPLC</span><span class="skill-tag">GC-MS</span><span class="skill-tag">Spectrophotometry</span><span class="skill-tag">Titration</span></div></div>
+    <div class="skill-card fade-in" style="transition-delay:0.1s"><span class="skill-icon">🔬</span><div class="skill-name">Laboratory Techniques</div><div class="skill-desc">Experienced in advanced instrument operation, laboratory safety standards, and systematic experimental procedures.</div><div class="skill-tags"><span class="skill-tag">IR Spectroscopy</span><span class="skill-tag">pH Analysis</span><span class="skill-tag">Distillation</span><span class="skill-tag">SDS-PAGE</span></div></div>
+    <div class="skill-card fade-in" style="transition-delay:0.2s"><span class="skill-icon">⚙️</span><div class="skill-name">Process Engineering</div><div class="skill-desc">Understanding of chemical process design, mass and energy balances, reaction kinetics and reactor design principles.</div><div class="skill-tags"><span class="skill-tag">Mass Balance</span><span class="skill-tag">Kinetics</span><span class="skill-tag">Reactor Design</span><span class="skill-tag">Thermodynamics</span></div></div>
+    <div class="skill-card fade-in" style="transition-delay:0.3s"><span class="skill-icon">💻</span><div class="skill-name">Computational Tools</div><div class="skill-desc">Applying digital tools to chemical data analysis, molecular modeling and scientific computation.</div><div class="skill-tags"><span class="skill-tag">MATLAB</span><span class="skill-tag">Python</span><span class="skill-tag">AutoCAD</span><span class="skill-tag">ChemDraw</span></div></div>
+    <div class="skill-card fade-in" style="transition-delay:0.4s"><span class="skill-icon">🧪</span><div class="skill-name">Organic Chemistry</div><div class="skill-desc">Strong foundation in organic synthesis, reaction mechanisms, functional group transformations and stereochemistry.</div><div class="skill-tags"><span class="skill-tag">Synthesis</span><span class="skill-tag">Mechanisms</span><span class="skill-tag">NMR Analysis</span><span class="skill-tag">Purification</span></div></div>
+    <div class="skill-card fade-in" style="transition-delay:0.5s"><span class="skill-icon">🌿</span><div class="skill-name">Green Chemistry</div><div class="skill-desc">Committed to sustainable chemistry — designing processes that minimize hazardous waste and maximize resource efficiency.</div><div class="skill-tags"><span class="skill-tag">Sustainability</span><span class="skill-tag">Waste Reduction</span><span class="skill-tag">Eco Processes</span><span class="skill-tag">Life Cycle Analysis</span></div></div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="qualifications">
+  <div class="section-header fade-in">
+    <p class="section-tag">// 03 · EDUCATION &amp; ACHIEVEMENTS</p>
+    <h2 class="section-title">Qualifi<span>cations</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="qual-container">
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-dot">BSc</div><div class="timeline-content"><div class="tl-date">2022 — PRESENT</div><div class="tl-title">BSc (Hons) Chemical Technology</div><div class="tl-place">Sabaragamuwa University of Sri Lanka — Faculty of Applied Sciences</div><div class="tl-desc">Pursuing a rigorous programme covering physical chemistry, analytical techniques, process engineering, polymer science, and environmental chemistry. Active participant in research symposia and laboratory projects.</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot">ENG</div><div class="timeline-content"><div class="tl-date">In Progress</div><div class="tl-title">Diploma in English</div><div class="tl-place">Sabaragamuwa University of Sri Lanka</div><div class="tl-desc">Developing advanced English language proficiency to support academic writing, research communication, and professional development in the international scientific community.</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot">A/L</div><div class="timeline-content"><div class="tl-date">2020 — 2022</div><div class="tl-title">G.C.E. Advanced Level — Physical Science Stream</div><div class="tl-place">Sri Lanka</div><div class="tl-desc">Studied Combined Mathematics, Physics, and Chemistry. Achieved results enabling admission to the Chemical Technology programme. Developed strong foundations in molecular science and mathematical analysis.</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot">O/L</div><div class="timeline-content"><div class="tl-date">2014 — 2019</div><div class="tl-title">G.C.E. Ordinary Level</div><div class="tl-place">Sri Lanka</div><div class="tl-desc">Completed secondary education with excellent results across science and mathematics. Developed early passion for chemistry through school science competitions and experiments.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section id="research">
+  <div class="section-header fade-in">
+    <p class="section-tag">// 04 · RESEARCH &amp; PROJECTS</p>
+    <h2 class="section-title">Research <span>Work</span></h2>
+    <div class="section-line"></div>
+    <p style="font-family:var(--FM);font-size:0.72rem;color:var(--muted);letter-spacing:2px;margin-top:1.5rem;">// UPCOMING — RESEARCH PROJECTS WILL BE ADDED HERE</p>
+  </div>
+  <div class="proj-grid">
+    <!-- Placeholder 1 -->
+    <div class="proj-card placeholder fade-in">
+      <div class="placeholder-inner">
+        <div class="ph-icon">⚗️</div>
+        <div class="proj-num">PROJECT — 01</div>
+        <div class="ph-text">RESEARCH IN PROGRESS<br>DETAILS COMING SOON</div>
+      </div>
+    </div>
+    <!-- Placeholder 2 -->
+    <div class="proj-card placeholder fade-in" style="transition-delay:0.15s">
+      <div class="placeholder-inner">
+        <div class="ph-icon">🔬</div>
+        <div class="proj-num">PROJECT — 02</div>
+        <div class="ph-text">RESEARCH IN PROGRESS<br>DETAILS COMING SOON</div>
+      </div>
+    </div>
+    <!-- Placeholder 3 -->
+    <div class="proj-card placeholder fade-in" style="transition-delay:0.3s">
+      <div class="placeholder-inner">
+        <div class="ph-icon">🧬</div>
+        <div class="proj-num">PROJECT — 03</div>
+        <div class="ph-text">RESEARCH IN PROGRESS<br>DETAILS COMING SOON</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header fade-in">
+    <p class="section-tag">// 05 · CONNECT</p>
+    <h2 class="section-title">Let's <span>Collaborate</span></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-outer">
+    <div class="contact-hero-row">
+      <!-- Quote + contact cards -->
+      <div>
+        <div class="contact-quote-block fade-in" style="margin-bottom:2rem;position:relative;z-index:1;">
+          <div class="cq-tag">// PERSONAL STATEMENT</div>
+          <div class="cq-title">A Word From Tharusha</div>
+          <div class="cq-quote">"Chemistry is not just a subject — it is the art of understanding how matter speaks. Every compound, every reaction, every bond formed is a conversation between atoms. My mission is to listen, interpret, and innovate."</div>
+        </div>
+        <!-- Contact link cards grid -->
+        <div class="contact-orbit fade-in" style="transition-delay:0.2s;">
+          <a href="mailto:tharushadilshan12365@gmail.com" class="clink-card">
+            <div class="clink-icon email">✉️</div>
+            <div class="clink-info"><div class="clink-label">Email</div><div class="clink-val">tharushadilshan12365@gmail.com</div></div>
+          </a>
+          <a href="https://www.linkedin.com/in/tharusha-dilshan-552381399/" target="_blank" class="clink-card">
+            <div class="clink-icon li">in</div>
+            <div class="clink-info"><div class="clink-label">LinkedIn</div><div class="clink-val">tharusha-dilshan-552381399</div></div>
+          </a>
+          <a href="https://github.com/TharushaDil" target="_blank" class="clink-card">
+            <div class="clink-icon gh">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#e8f4f8"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </div>
+            <div class="clink-info"><div class="clink-label">GitHub</div><div class="clink-val">github.com/TharushaDil</div></div>
+          </a>
+          <a href="https://web.facebook.com/tharusha.wikrama" target="_blank" class="clink-card">
+            <div class="clink-icon fb">📘</div>
+            <div class="clink-info"><div class="clink-label">Facebook</div><div class="clink-val">tharusha.wikrama</div></div>
+          </a>
+          <a href="https://www.instagram.com/tharu_dx" target="_blank" class="clink-card">
+            <div class="clink-icon ig">📷</div>
+            <div class="clink-info"><div class="clink-label">Instagram</div><div class="clink-val">@tharu_dx</div></div>
+          </a>
+          <a href="https://wa.me/94767507363" target="_blank" class="clink-card">
+            <div class="clink-icon wa">💬</div>
+            <div class="clink-info"><div class="clink-label">WhatsApp</div><div class="clink-val">+94 76 750 7363</div></div>
+          </a>
+        </div>
+      </div>
+      <!-- Contact form -->
+      <div class="contact-form-wrap fade-in" style="transition-delay:0.3s;">
+        <div class="form-section-tag">// SEND A MESSAGE</div>
+        <form class="contact-form" id="contact-form">
+          <input type="text" placeholder="Your Name" required>
+          <input type="email" placeholder="Your Email" required>
+          <input type="text" placeholder="Subject">
+          <textarea placeholder="Your message..." rows="6" required></textarea>
+          <button type="submit" class="btn btn-primary">TRANSMIT MESSAGE</button>
+        </form>
+        <div id="msg-confirm" style="display:none;font-family:var(--FM);font-size:0.8rem;color:var(--teal);margin-top:1rem;">✓ Message received. Tharusha will respond shortly.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2025 Tharusha Dilshan · Chemical Technology</div>
+  <div>Built with <span style="color:var(--cyan)">molecular precision</span></div>
+  <div>TD_CHEM v2.0.0</div>
+</footer>
+
+<script>
+// ── CURSOR ──
+const cd=document.getElementById('cd'),cr=document.getElementById('cr');
+document.addEventListener('mousemove',e=>{cd.style.left=e.clientX+'px';cd.style.top=e.clientY+'px';cr.style.left=e.clientX+'px';cr.style.top=e.clientY+'px';});
+document.querySelectorAll('a,button,.proj-card,.skill-card,.clink-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cr.style.width='52px';cr.style.height='52px';});
+  el.addEventListener('mouseleave',()=>{cr.style.width='34px';cr.style.height='34px';});
+});
+
+// ── BG PARTICLES ──
+(function(){
+  const c=document.getElementById('bg-canvas'),ctx=c.getContext('2d');
+  let w,h,pts=[];
+  function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<70;i++)pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,r:Math.random()*1.5+0.3,op:Math.random()*0.4+0.1});
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,'+p.op+')';ctx.fill();});
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const a=pts[i],b=pts[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle='rgba(0,229,255,'+(1-d/130)*0.07+')';ctx.lineWidth=0.5;ctx.stroke();}}
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── MOLECULES ──
+const MOLECULES={
+  water:{name:'H₂O',atoms:[{x:0,y:0,z:0,el:'O',r:14,col:'#ff5555'},{x:1.5,y:-1.2,z:0.4,el:'H',r:9,col:'#aabbff'},{x:-1.5,y:-1.2,z:0.4,el:'H',r:9,col:'#aabbff'}],bonds:[[0,1],[0,2]]},
+  co2:{name:'CO₂',atoms:[{x:0,y:0,z:0,el:'C',r:12,col:'#999'},{x:2.5,y:0,z:0,el:'O',r:14,col:'#ff5555'},{x:-2.5,y:0,z:0,el:'O',r:14,col:'#ff5555'}],bonds:[[0,1],[0,2]]},
+  benzene:{name:'C₆H₆',atoms:[{x:2,y:0,z:0,el:'C',r:11,col:'#888'},{x:1,y:1.73,z:0,el:'C',r:11,col:'#888'},{x:-1,y:1.73,z:0,el:'C',r:11,col:'#888'},{x:-2,y:0,z:0,el:'C',r:11,col:'#888'},{x:-1,y:-1.73,z:0,el:'C',r:11,col:'#888'},{x:1,y:-1.73,z:0,el:'C',r:11,col:'#888'},{x:3.4,y:0,z:0,el:'H',r:7,col:'#aabbff'},{x:1.7,y:2.95,z:0,el:'H',r:7,col:'#aabbff'},{x:-1.7,y:2.95,z:0,el:'H',r:7,col:'#aabbff'},{x:-3.4,y:0,z:0,el:'H',r:7,col:'#aabbff'},{x:-1.7,y:-2.95,z:0,el:'H',r:7,col:'#aabbff'},{x:1.7,y:-2.95,z:0,el:'H',r:7,col:'#aabbff'}],bonds:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]]},
+  nh3:{name:'NH₃',atoms:[{x:0,y:0,z:0,el:'N',r:13,col:'#4488ff'},{x:1.8,y:-1,z:1,el:'H',r:9,col:'#aabbff'},{x:-1.8,y:-1,z:1,el:'H',r:9,col:'#aabbff'},{x:0,y:-1,z:-2,el:'H',r:9,col:'#aabbff'}],bonds:[[0,1],[0,2],[0,3]]},
+  caffeine:{name:'Caffeine',atoms:[{x:0,y:0,z:0,el:'N',r:12,col:'#4488ff'},{x:1.5,y:1.3,z:0,el:'C',r:11,col:'#888'},{x:3,y:0.5,z:0,el:'N',r:12,col:'#4488ff'},{x:3,y:-1.2,z:0,el:'C',r:11,col:'#888'},{x:1.5,y:-2,z:0,el:'C',r:11,col:'#888'},{x:0,y:-1.3,z:0,el:'C',r:11,col:'#888'},{x:4.5,y:1.5,z:0,el:'C',r:11,col:'#888'},{x:4.5,y:-2.2,z:0,el:'O',r:12,col:'#ff5555'},{x:-1.5,y:1,z:0,el:'O',r:12,col:'#ff5555'},{x:1.5,y:2.8,z:0,el:'N',r:12,col:'#4488ff'},{x:1.5,y:4.2,z:0,el:'C',r:11,col:'#888'}],bonds:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[2,6],[3,7],[0,8],[1,9],[9,10]]},
+  glucose:{name:'Glucose',atoms:[{x:-3,y:0,z:0,el:'C',r:11,col:'#888'},{x:-1.5,y:1.2,z:0,el:'C',r:11,col:'#888'},{x:0,y:0.5,z:0,el:'C',r:11,col:'#888'},{x:1.5,y:1.2,z:0,el:'C',r:11,col:'#888'},{x:3,y:0.5,z:0,el:'C',r:11,col:'#888'},{x:4.5,y:1.5,z:0,el:'C',r:11,col:'#888'},{x:-3,y:-1.5,z:0,el:'O',r:12,col:'#ff5555'},{x:-1.5,y:2.7,z:0,el:'O',r:12,col:'#ff5555'},{x:0,y:-1,z:0,el:'O',r:12,col:'#ff5555'},{x:1.5,y:2.7,z:0,el:'O',r:12,col:'#ff5555'},{x:3,y:-1,z:0,el:'O',r:12,col:'#ff5555'},{x:5.5,y:0.5,z:0,el:'O',r:12,col:'#ff5555'}],bonds:[[0,1],[1,2],[2,3],[3,4],[4,5],[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]]},
+  dopamine:{name:'Dopamine C₈H₁₁NO₂',atoms:[
+    {x:0,y:0,z:0,el:'C',r:13,col:'#888'},{x:1.4,y:0.8,z:0.2,el:'C',r:13,col:'#888'},{x:1.4,y:2.4,z:0.1,el:'C',r:13,col:'#888'},
+    {x:0,y:3.2,z:0,el:'C',r:13,col:'#888'},{x:-1.4,y:2.4,z:-0.1,el:'C',r:13,col:'#888'},{x:-1.4,y:0.8,z:-0.2,el:'C',r:13,col:'#888'},
+    {x:2.8,y:3.2,z:0.2,el:'O',r:14,col:'#ff5555'},{x:0,y:4.8,z:0,el:'O',r:14,col:'#ff5555'},
+    {x:2.8,y:0,z:0.3,el:'C',r:13,col:'#888'},{x:4.2,y:0.8,z:0.2,el:'C',r:13,col:'#888'},{x:5.6,y:0,z:0.1,el:'N',r:14,col:'#4488ff'}
+  ],bonds:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[2,6],[3,7],[1,8],[8,9],[9,10]]}
+};
+
+let currentMol='dopamine',rotX=0.3,rotY=0.5,dragging=false,lastMX=0,lastMY=0;
+document.querySelectorAll('.mol-btn').forEach(btn=>{btn.addEventListener('click',function(){currentMol=this.dataset.mol;document.querySelectorAll('.mol-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');});});
+const ac=document.getElementById('atom-canvas'),actx=ac.getContext('2d');
+ac.addEventListener('mousedown',e=>{dragging=true;lastMX=e.clientX;lastMY=e.clientY;});
+document.addEventListener('mouseup',()=>dragging=false);
+document.addEventListener('mousemove',e=>{if(!dragging)return;rotY+=(e.clientX-lastMX)*0.01;rotX+=(e.clientY-lastMY)*0.01;lastMX=e.clientX;lastMY=e.clientY;});
+function rot3D(x,y,z){const cy=Math.cos(rotY),sy=Math.sin(rotY),cx=Math.cos(rotX),sx=Math.sin(rotX);const x2=x*cy+z*sy,z2=-x*sy+z*cy,y2=y*cx-z2*sx,z3=y*sx+z2*cx;return[x2,y2,z3];}
+function resizeAC(){const r=ac.getBoundingClientRect();ac.width=r.width;ac.height=r.height;}resizeAC();window.addEventListener('resize',resizeAC);
+function drawAtom(){
+  const W=ac.width,H=ac.height;actx.clearRect(0,0,W,H);
+  const mol=MOLECULES[currentMol],scale=Math.min(W,H)*0.075,cx=W/2,cy=H/2;
+  let ax=0,ay=0,az=0;mol.atoms.forEach(a=>{ax+=a.x;ay+=a.y;az+=a.z;});ax/=mol.atoms.length;ay/=mol.atoms.length;az/=mol.atoms.length;
+  const proj=mol.atoms.map(a=>{const[rx,ry,rz]=rot3D(a.x-ax,a.y-ay,a.z-az);const p=1+rz*0.05;return{sx:cx+rx*scale*p,sy:cy+ry*scale*p,pz:rz,el:a.el,r:a.r*p,col:a.col};});
+  mol.bonds.forEach(b=>{const a=proj[b[0]],bb=proj[b[1]];actx.beginPath();actx.moveTo(a.sx,a.sy);actx.lineTo(bb.sx,bb.sy);actx.strokeStyle='rgba(0,229,255,0.4)';actx.lineWidth=2.5;actx.stroke();actx.beginPath();actx.moveTo(a.sx,a.sy);actx.lineTo(bb.sx,bb.sy);actx.strokeStyle='rgba(0,229,255,0.09)';actx.lineWidth=8;actx.stroke();});
+  proj.slice().sort((a,b)=>a.pz-b.pz).forEach(a=>{const g=actx.createRadialGradient(a.sx-a.r*0.35,a.sy-a.r*0.35,a.r*0.05,a.sx,a.sy,a.r*1.3);g.addColorStop(0,'rgba(255,255,255,0.9)');g.addColorStop(0.3,a.col);g.addColorStop(1,'rgba(0,0,0,0.6)');actx.beginPath();actx.arc(a.sx,a.sy,a.r,0,Math.PI*2);actx.fillStyle=g;actx.fill();actx.strokeStyle='rgba(255,255,255,0.15)';actx.lineWidth=0.5;actx.stroke();actx.fillStyle='rgba(255,255,255,0.95)';actx.font='bold '+Math.max(7,a.r*0.7)+'px monospace';actx.textAlign='center';actx.textBaseline='middle';actx.fillText(a.el,a.sx,a.sy);});
+  actx.fillStyle='rgba(0,229,255,0.6)';actx.font='12px monospace';actx.textAlign='left';actx.textBaseline='top';actx.fillText(mol.name,14,28);
+  actx.save();actx.translate(cx,cy);for(let i=0;i<3;i++){actx.beginPath();actx.ellipse(0,0,W*0.36*(1+i*0.13),H*0.11*(1+i*0.09),rotY+i*Math.PI/3,0,Math.PI*2);actx.strokeStyle='rgba(0,229,255,'+(0.05-i*0.012)+')';actx.lineWidth=1;actx.stroke();}actx.restore();
+  rotY+=0.005;rotX+=0.002;requestAnimationFrame(drawAtom);
+}drawAtom();
+
+// ── SCROLL REVEAL ──
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.1});
+document.querySelectorAll('.fade-in,.timeline-item').forEach(el=>obs.observe(el));
+
+// ── COUNTERS ──
+const cobs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const tgt=parseInt(e.target.dataset.target);let cur=0;const inc=tgt/40;const tmr=setInterval(()=>{cur=Math.min(cur+inc,tgt);e.target.textContent=Math.floor(cur)+(cur>=tgt?'+':'');if(cur>=tgt)clearInterval(tmr);},40);cobs.unobserve(e.target);}});});
+document.querySelectorAll('.stat-num').forEach(el=>cobs.observe(el));
+
+// ── FORM ──
+document.getElementById('contact-form').addEventListener('submit',function(e){e.preventDefault();document.getElementById('msg-confirm').style.display='block';this.reset();setTimeout(()=>document.getElementById('msg-confirm').style.display='none',5000);});
+
+// ── WELCOME WALL ──
+(function(){
+  const wc=document.getElementById('wcanvas'),ctx=wc.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=wc.width=window.innerWidth;H=wc.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  // Many big particles
+  for(let i=0;i<120;i++)pts.push({
+    x:Math.random()*W,y:Math.random()*H,
+    vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,
+    r:Math.random()*2.5+0.4,op:Math.random()*0.5+0.1
+  });
+
+  // BIG dopamine molecule for welcome
+  const DN=[
+    {x:0,y:0},{x:1.4,y:0.8},{x:1.4,y:2.4},{x:0,y:3.2},
+    {x:-1.4,y:2.4},{x:-1.4,y:0.8},{x:2.8,y:3.2},{x:0,y:4.8},
+    {x:2.8,y:0},{x:4.2,y:0.8},{x:5.6,y:0}
+  ];
+  const DB=[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[2,6],[3,7],[1,8],[8,9],[9,10]];
+  const DC=['#aaa','#aaa','#aaa','#aaa','#aaa','#aaa','#ff5555','#ff5555','#aaa','#aaa','#4488ff'];
+  const DL=['C','C','C','C','C','C','O','O','C','C','N'];
+  let dRot=0;
+
+  function drawWall(){
+    ctx.clearRect(0,0,W,H);
+    // dark vignette
+    const vg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.7);
+    vg.addColorStop(0,'rgba(1,10,15,0)');vg.addColorStop(1,'rgba(1,10,15,0.85)');
+    ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
+
+    // particles
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,229,255,'+p.op+')';ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const a=pts[i],b=pts[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<110){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle='rgba(0,229,255,'+(1-d/110)*0.08+')';ctx.lineWidth=0.5;ctx.stroke();}
+    }
+
+    // BIG dopamine — bottom-right quadrant
+    dRot+=0.008;
+    const scale=Math.min(W,H)*0.085;
+    const molCX=W*0.78, molCY=H*0.62;
+    const centerX=2.8, centerY=2.4;
+    const proj=DN.map(n=>{
+      const rx=n.x-centerX, ry=n.y-centerY;
+      const rx2=rx*Math.cos(dRot)-ry*Math.sin(dRot)*0.4;
+      const ry2=rx*Math.sin(dRot)*0.35+ry*Math.cos(dRot);
+      return{sx:molCX+rx2*scale, sy:molCY+ry2*scale};
+    });
+    // bond glow
+    DB.forEach(b=>{
+      const a=proj[b[0]],bb=proj[b[1]];
+      ctx.beginPath();ctx.moveTo(a.sx,a.sy);ctx.lineTo(bb.sx,bb.sy);
+      ctx.strokeStyle='rgba(0,229,255,0.18)';ctx.lineWidth=12;ctx.stroke();
+      ctx.beginPath();ctx.moveTo(a.sx,a.sy);ctx.lineTo(bb.sx,bb.sy);
+      ctx.strokeStyle='rgba(0,229,255,0.55)';ctx.lineWidth=2.5;ctx.stroke();
+    });
+    // atoms
+    proj.forEach((p,i)=>{
+      const r=i===6||i===7||i===10?18:15;
+      const g=ctx.createRadialGradient(p.sx-r*0.3,p.sy-r*0.3,r*0.05,p.sx,p.sy,r*1.4);
+      g.addColorStop(0,'rgba(255,255,255,0.95)');g.addColorStop(0.3,DC[i]);g.addColorStop(1,'rgba(0,0,0,0.55)');
+      ctx.beginPath();ctx.arc(p.sx,p.sy,r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=0.5;ctx.stroke();
+      ctx.fillStyle='#fff';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(DL[i],p.sx,p.sy);
+    });
+    // Dopamine label
+    ctx.save();
+    ctx.font='bold 13px monospace';ctx.fillStyle='rgba(0,255,195,0.7)';
+    ctx.textAlign='center';ctx.fillText('C₈H₁₁NO₂  ·  Dopamine',molCX,molCY+scale*1.6);
+    ctx.restore();
+
+    if(document.getElementById('wwall'))requestAnimationFrame(drawWall);
+  }
+  drawWall();
+  // expand divider
+  setTimeout(()=>{const d=document.getElementById('wdivider');if(d)d.classList.add('go');},400);
+})();
+
+function dismissWall(){
+  const w=document.getElementById('wwall');
+  if(!w)return;
+  w.classList.add('wall-out');
+  setTimeout(()=>{w.remove();},800);
+}
+setTimeout(dismissWall,4500);
+</script>
+</body>
+</html>
